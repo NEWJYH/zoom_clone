@@ -1,7 +1,5 @@
 import WebSocket from "ws";
-
 import http from "http";
-
 import express from "express";
 
 const app = express();
@@ -29,5 +27,16 @@ const server = http.createServer(app);
 // WebSocket.Server({server]})를 넘기게 되면 http서버와 webSocket 서버둘다 돌릴수 있음
 const wss = new WebSocket.Server({ server });
 // http 서버를 원하지 않는다면 인자로 넘길 필요 없음
+
+
+function handleConnection(socket) {
+  console.log(socket);
+}
+// 웹소켓 이벤트
+wss.on("connection", handleConnection);
+
+
+
+
 
 server.listen(port, handleListen);
