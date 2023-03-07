@@ -1,7 +1,12 @@
+import WebSocket from "ws";
+
+import http from "http";
+
 import express from "express";
 
 const app = express();
 const port = 3000;
+
 // json file 입출력 설정
 app.use(express.json());
 
@@ -13,10 +18,16 @@ app.set("views", __dirname + "/views");
 app.use("/public", express.static(__dirname + "/public"));
 
 // route 설정
-app.get("/", (req, res) => res.render("home"));
-app.get("/*", (req, res) => res.redirect("/"));
+app.get("/", (_, res) => res.render("home"));
+app.get("/*", (_, res) => res.redirect("/"));
 
-app.listen(port, () => {
-  console.log(`Joom app listening on port ${port}`);
-  console.log(`http://localhost:3000`);
-});
+// ws 설정
+const handleListen = () =>
+  console.log(`Joom app listening on http://localhost:${port}`);
+const server = http.createServer(app);
+// http와 webSocket 둘다 작동시키기 위함
+// WebSocket.Server({server]})를 넘기게 되면 http서버와 webSocket 서버둘다 돌릴수 있음
+const wss = new WebSocket.Server({ server });
+// http 서버를 원하지 않는다면 인자로 넘길 필요 없음
+
+server.listen(port, handleListen);
