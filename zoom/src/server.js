@@ -26,17 +26,28 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 // http 서버를 원하지 않는다면 인자로 넘길 필요 없음
 
+
+// 소켓에 연결되면 array에 소캣을 넣어서 동기화 시키기 위함 
+// 1대1연결에서 다대일로 변경
+const sockets = [];
+
 // 웹소켓 이벤트
 wss.on("connection", (socket) => {
+  sockets.push(socket);
   console.log("Connected to Browser ✅");
 
-  socket.send("Hello");
-
   socket.on("message", (message) => {
-    console.log("==========Browser==========");
-    console.log(`${message}`);
-    console.log("===========================");
+    sockets.forEach((sock) => {
+      sock.send(message.toString());
+    });
   });
+
+  // socket.on("message", (message) => {
+  //   console.log("==========Browser==========");
+  //   console.log(`${message}`);
+  //   socket.send(message.toString());
+  //   console.log("===========================");
+  // });
 
   socket.on("close", () => console.log("Disconnected from Browser ❌"));
 });
