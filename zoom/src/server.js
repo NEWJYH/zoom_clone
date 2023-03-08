@@ -28,14 +28,15 @@ const wss = new WebSocket.Server({ server });
 
 // 소켓에 연결되면 array에 소캣을 넣어서 동기화 시키기 위함
 // 1대1연결에서 다대일로 변경
-const sockets = [];
+let sockets = [];
 
 // 웹소켓 이벤트
+let cnt = 0;
 wss.on("connection", (socket) => {
   sockets.push(socket);
-  socket["nickname"] = "anonymous";
+  socket["nickname"] = `anonymous ${++cnt}`;
   console.log("Connected to Browser ✅");
-
+  console.log(`현재 접속중 : ${sockets.length}`);
   socket.on("message", (msg) => {
     const message = JSON.parse(msg);
     switch (message.type) {
@@ -43,9 +44,11 @@ wss.on("connection", (socket) => {
         socket["nickname"] = message.payload;
         break;
       case "message":
-        sockets.forEach((sock) =>
-          sock.send(`${socket.nickname}: ${message.payload}`)
-        );
+        sockets.forEach((sock) => {
+          if (sock.nickname !== socket.nickname) {
+            sock.send(`${socket.nickname}: ${message.payload}`);
+          }
+        });
         break;
 
       default:
@@ -53,7 +56,13 @@ wss.on("connection", (socket) => {
     }
   });
 
-  socket.on("close", () => console.log("Disconnected from Browser ❌"));
+  socket.on("close", () => {
+    sockets = sockets.filter((sock) => {
+      return sock !== socket;
+    });
+    console.log("Disconnected from Browser ❌");
+    console.log(`현재 접속중 : ${sockets.length}`);
+  });
 });
 
 // ws 설정
