@@ -65,7 +65,6 @@ wss.on("connection", (socket) => {
   });
 });
 
-// ws 설정
 server.listen(port, () => {
   console.log(`Joom app listening on http://localhost:${port}`);
 });
