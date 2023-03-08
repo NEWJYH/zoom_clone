@@ -25,9 +25,29 @@ const httpServer = http.createServer(app);
 // io server
 const wsServer = SocketIO(httpServer);
 
+function publicRooms() {
+  const {
+    sockets: {
+      adapter: { sids, rooms },
+    },
+  } = wsServer;
+
+  const publicRooms = [];
+  rooms.forEach((_, key) => {
+    if (sids.get(key) === undefined) {
+      publicRooms.push(key);
+    }
+  });
+  // sids에는 개인방, rooms에는 개인방,공개방 다있음
+  // rooms가 sids를 포함한다 보면됨
+  // 공개방만 얻고 싶을때는 rooms에서 sids를 빼면 됨
+  return publicRooms;
+}
+
 wsServer.on("connection", (socket) => {
   socket["nickname"] = "Anon";
   socket.onAny((event) => {
+    // console.log(wsServer.sockets.adapter);
     console.log(`Socket Event: ${event}`);
   });
 
@@ -36,12 +56,19 @@ wsServer.on("connection", (socket) => {
     done();
     // room 전체에 메시지 보내기
     socket.to(roomName).emit("welcome", socket.nickname);
+
+    // message를 모두에게 보냄
+    wsServer.sockets.emit("room_change", publicRooms());
   });
 
   socket.on("disconnecting", () => {
     socket.rooms.forEach((room) =>
       socket.to(room).emit("bye", socket.nickname)
     );
+  });
+
+  socket.on("disconnect", () => {
+    wsServer.sockets.emit("room_change", publicRooms());
   });
 
   socket.on("message", (msg, room, done) => {
