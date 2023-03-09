@@ -25,6 +25,17 @@ const httpServer = http.createServer(app);
 // io server
 const wsServer = SocketIO(httpServer);
 
+wsServer.on("connection", (socket) => {
+  
+  socket.on("join_room", (roomName, done) => {
+    socket.join(roomName);
+    done();
+    socket.to(roomName).emit("welcome")
+  });
+
+
+});
+
 httpServer.listen(port, () => {
   console.log(`Joom app listening on http://localhost:${port}`);
 });
