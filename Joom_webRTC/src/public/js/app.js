@@ -172,11 +172,42 @@ socket.on("ice", (ice) => {
 
 // RTC Code
 function makeConnection() {
-  myPeerConnection = new RTCPeerConnection();
+  myPeerConnection = new RTCPeerConnection({
+    iceServers: [
+      {
+        urls: ["stun:ntk-turn-2.xirsys.com"],
+      },
+      {
+        username:
+          "KbQImTp_CaMT_ixdhlCNGiHfGraU27--eedgEFj5aGs46fHvs1MLXluFMBjQQKEcAAAAAGQJcy93amQ1ODQ2",
+        credential: "05ad82ca-be3e-11ed-abb4-0242ac120004",
+        urls: [
+          "turn:ntk-turn-2.xirsys.com:80?transport=udp",
+          "turn:ntk-turn-2.xirsys.com:3478?transport=udp",
+          "turn:ntk-turn-2.xirsys.com:80?transport=tcp",
+          "turn:ntk-turn-2.xirsys.com:3478?transport=tcp",
+          "turns:ntk-turn-2.xirsys.com:443?transport=tcp",
+          "turns:ntk-turn-2.xirsys.com:5349?transport=tcp",
+        ],
+      },
+    ],
+    // iceServers: [
+    //   {
+    //     urls: [
+    //       "stun:stun.l.google.com:19302",
+    //       "stun:stun1.l.google.com:19302",
+    //       "stun:stun2.l.google.com:19302",
+    //       "stun:stun3.l.google.com:19302",
+    //       "stun:stun4.l.google.com:19302",
+    //     ],
+    //   },
+    // ],
+  });
   // for IceCandidate
   myPeerConnection.addEventListener("icecandidate", handleIce);
-  //
-  myPeerConnection.addEventListener("addstream", handleAddStream);
+  // // 아이폰 문제 해결
+  // myPeerConnection.addEventListener("addstream", handleAddStream);
+  myPeerConnection.addEventListener("track", handleTrack);
 
   myStream.getTracks().forEach((track) => {
     myPeerConnection.addTrack(track, myStream);
@@ -189,10 +220,15 @@ function handleIce(data) {
   socket.emit("ice", data.candidate, roomName);
 }
 
-function handleAddStream(data) {
-  // console.log("got an stream from my peer");
-  // console.log("Peer's Stream", data.stream);
-  // console.log("Host Stream", myStream);
-  const peerFace = document.getElementById("peerFace");
-  peerFace.srcObject = data.stream;
+// function handleAddStream(data) {
+//   // console.log("got an stream from my peer");
+//   // console.log("Peer's Stream", data.stream);
+//   // console.log("Host Stream", myStream);
+//   const peerFace = document.getElementById("peerFace");
+//   peerFace.srcObject = data.stream;
+// }
+function handleTrack(data) {
+  console.log("handle track");
+  const peerFace = document.querySelector("#peerFace");
+  peerFace.srcObject = data.streams[0];
 }
