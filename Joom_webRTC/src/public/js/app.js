@@ -173,7 +173,7 @@ socket.on("ice", (ice) => {
 // RTC Code
 function makeConnection() {
   myPeerConnection = new RTCPeerConnection({
- 
+
     // iceServers: [
     //   {
     //     urls: [
@@ -188,7 +188,7 @@ function makeConnection() {
   });
   // for IceCandidate
   myPeerConnection.addEventListener("icecandidate", handleIce);
-  // // 아이폰 문제 해결
+  // // 아이폰 문제
   // myPeerConnection.addEventListener("addstream", handleAddStream);
   myPeerConnection.addEventListener("track", handleTrack);
 
