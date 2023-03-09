@@ -173,24 +173,7 @@ socket.on("ice", (ice) => {
 // RTC Code
 function makeConnection() {
   myPeerConnection = new RTCPeerConnection({
-    iceServers: [
-      {
-        urls: ["stun:ntk-turn-2.xirsys.com"],
-      },
-      {
-        username:
-          "KbQImTp_CaMT_ixdhlCNGiHfGraU27--eedgEFj5aGs46fHvs1MLXluFMBjQQKEcAAAAAGQJcy93amQ1ODQ2",
-        credential: "05ad82ca-be3e-11ed-abb4-0242ac120004",
-        urls: [
-          "turn:ntk-turn-2.xirsys.com:80?transport=udp",
-          "turn:ntk-turn-2.xirsys.com:3478?transport=udp",
-          "turn:ntk-turn-2.xirsys.com:80?transport=tcp",
-          "turn:ntk-turn-2.xirsys.com:3478?transport=tcp",
-          "turns:ntk-turn-2.xirsys.com:443?transport=tcp",
-          "turns:ntk-turn-2.xirsys.com:5349?transport=tcp",
-        ],
-      },
-    ],
+ 
     // iceServers: [
     //   {
     //     urls: [
